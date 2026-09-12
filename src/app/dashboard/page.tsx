@@ -44,7 +44,7 @@ export default async function DashboardPage() {
           <p className="mt-8 text-sm text-stone-400">Nothing here yet — check back once your CR adds subjects.</p>
         ) : (
           <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {subjects.map((s) => {
+            {subjects.map((s, i) => {
               const status = subjectStatus(
                 s.tasks.map((t) => ({ dueDate: t.dueDate, completed: t.completions[0]?.completed ?? false }))
               );
@@ -54,9 +54,12 @@ export default async function DashboardPage() {
                   href={`/dashboard/subjects/${s.id}`}
                   className="rounded-lg border border-stone-200 bg-white p-4 transition hover:border-accent-300 dark:border-stone-800 dark:bg-stone-900 dark:hover:border-accent-700"
                 >
-                  <p className="font-serif text-lg text-stone-900 dark:text-white">{s.name}</p>
-                  {s.guideName && <p className="text-sm text-stone-500 dark:text-stone-400">{s.guideName}</p>}
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-mono text-sm text-stone-300 dark:text-stone-700">{String(i + 1).padStart(2, "0")}</span>
+                    <p className="font-serif text-lg text-stone-900 dark:text-white">{s.name}</p>
+                  </div>
+                  {s.guideName && <p className="pl-[27px] text-sm text-stone-500 dark:text-stone-400">{s.guideName}</p>}
+                  <div className="mt-3 flex items-center justify-between pl-[27px]">
                     <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[status.tone]}`}>
                       {status.text}
                     </span>

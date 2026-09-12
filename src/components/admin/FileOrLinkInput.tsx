@@ -22,14 +22,26 @@ export default function FileOrLinkInput({
     setError("");
     setUploading(true);
     try {
+      // The upload SDK discards the real server error on failure and always
+      // throws a generic one -- check whether storage is even configured
+      // first, so a misconfigured deployment shows the actual reason.
+      const status = await fetch("/api/upload").then((r) => r.json());
+      if (!status.configured) {
+        setError(
+          "File uploads aren't set up yet on this deployment: no Blob storage is connected. Ask whoever deployed this to attach one in Vercel (Project → Storage → Create Database → Blob), or paste a link instead for now."
+        );
+        setUploading(false);
+        return;
+      }
+
       const blob = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
       setFileName(file.name);
       onChange({ fileUrl: blob.url, linkUrl: "" });
-    } catch {
-      setError("Upload failed. Try a smaller file or check your connection.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed. Try a smaller file or check your connection.");
     }
     setUploading(false);
   }
