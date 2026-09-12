@@ -15,7 +15,7 @@ export default function NewSubjectForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-xl border border-dashed border-stone-300 py-3 text-sm font-medium text-stone-500 hover:border-stone-400 hover:text-stone-700 dark:border-stone-700 dark:text-stone-400"
+        className="text-sm font-medium text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
       >
         + Add subject
       </button>

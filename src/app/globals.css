@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
 /*
- * Warm, editorial palette — structural chrome uses Tailwind's built-in
- * `stone` scale (already warm neutrals, not cool blue-gray), and `accent`
- * below is the one custom color: a terracotta reserved for primary actions,
- * closer to Claude's own brand than the default "AI app" cool-blue look.
+ * Warm, editorial palette and type system — deliberately away from the
+ * default "AI-generated SaaS" tells: no gradients, no cards-for-everything,
+ * no generic Inter/Roboto grid. Structural chrome uses Tailwind's built-in
+ * `stone` scale (warm neutrals); `accent` is the one custom color, a
+ * terracotta used sparingly for actions and emphasis; `serif` is an
+ * editorial display face reserved for headings and titles.
  */
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-source-serif);
 
   --color-accent-50: #fbf3ef;
   --color-accent-100: #f5e3d9;

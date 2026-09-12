@@ -20,7 +20,7 @@ export default function NewTaskForm({ subjectId }: { subjectId: string }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-lg border border-dashed border-amber-300 py-2.5 text-sm font-medium text-amber-700 hover:border-amber-400 dark:border-amber-800 dark:text-amber-400"
+        className="text-sm font-medium text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
       >
         + Add assignment / quiz / task
       </button>

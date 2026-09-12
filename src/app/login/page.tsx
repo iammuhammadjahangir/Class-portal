@@ -104,15 +104,17 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-stone-50 px-4 py-10 dark:bg-stone-950">
       <div className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-accent-600 text-sm font-bold text-white dark:bg-accent-500">
-            AU
-          </span>
-          <h1 className="text-xl font-semibold text-stone-900 dark:text-white">MSCS Weekend · Fall 26</h1>
-          <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">Air University class portal</p>
+        <div className="mb-8 text-center">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-accent-600 dark:text-accent-400">
+            Air University
+          </p>
+          <h1 className="mt-1 font-serif text-2xl font-semibold text-stone-900 dark:text-white">
+            MSCS Weekend · Fall 26
+          </h1>
+          <p className="mt-1.5 text-sm text-stone-500 dark:text-stone-400">Sign in with your roll number</p>
         </div>
 
-        <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm dark:border-stone-800 dark:bg-stone-900">
+        <div className="rounded-lg border border-stone-200 bg-white p-6 dark:border-stone-800 dark:bg-stone-900">
           {step === "rollNumber" && (
             <form onSubmit={handleLookup} className="space-y-4">
               <div>

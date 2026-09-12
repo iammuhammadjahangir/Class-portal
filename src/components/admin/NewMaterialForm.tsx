@@ -18,7 +18,7 @@ export default function NewMaterialForm({ subjectId }: { subjectId: string }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-lg border border-dashed border-stone-300 py-2.5 text-sm font-medium text-stone-500 hover:border-stone-400 dark:border-stone-700 dark:text-stone-400"
+        className="text-sm font-medium text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"
       >
         + Add course content / slides
       </button>
