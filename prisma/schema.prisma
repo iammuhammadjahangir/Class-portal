@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+// A pre-loaded class roster entry. Students "claim" their own row by
+// picking their name + confirming their roll number, then setting a
+// password. This avoids the CR having to hand out credentials one by one,
+// while the roll-number check stops a stranger from claiming someone else's name.
+model Student {
+  id           String   @id @default(cuid())
+  name         String
+  rollNumber   String   @unique
+  passwordHash String? // null until the student claims their account
+  isAdmin      Boolean  @default(false) // true for the CR (super admin)
+  claimedAt    DateTime?
+  createdAt    DateTime @default(now())
+
+  completions TaskCompletion[]
+
+  @@index([name])
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String
+  guideName   String? // instructor / course guide
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  materials Material[]
+  tasks     Task[]
+}
+
+// Course content / slides / reading material — informational only, never
+// shown with a complete/incomplete toggle.
+model Material {
+  id          String   @id @default(cuid())
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  fileUrl     String? // uploaded via Vercel Blob
+  linkUrl     String? // external link (Drive, YouTube, etc.)
+  createdAt   DateTime @default(now())
+
+  @@index([subjectId])
+}
+
+enum TaskType {
+  ASSIGNMENT
+  QUIZ
+  TASK
+}
+
+// Assignments / quizzes / tasks — the "action required" items. Shown
+// prominently, sorted by due date, and each student can mark their own
+// completion status.
+model Task {
+  id          String   @id @default(cuid())
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  type        TaskType @default(TASK)
+  dueDate     DateTime?
+  fileUrl     String?
+  linkUrl     String?
+  createdAt   DateTime @default(now())
+
+  completions TaskCompletion[]
+
+  @@index([subjectId])
+  @@index([dueDate])
+}
+
+model TaskCompletion {
+  id          String   @id @default(cuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  @@unique([taskId, studentId])
+  @@index([studentId])
+}
