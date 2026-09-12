@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { TaskType, MaterialTag } from "@prisma/client";
+import { sanitizeRichText, isBlankRichText } from "@/lib/sanitizeHtml";
 
 async function requireAdmin() {
   const session = await auth();
@@ -121,11 +122,12 @@ export async function createTask(data: {
 }) {
   await requireAdmin();
   if (!data.title.trim()) throw new Error("Title is required.");
+  const description = data.description && !isBlankRichText(data.description) ? sanitizeRichText(data.description) : null;
   await prisma.task.create({
     data: {
       subjectId: data.subjectId,
       title: data.title.trim(),
-      description: data.description?.trim() || null,
+      description,
       type: data.type,
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
       fileUrl: data.fileUrl || null,

@@ -5,6 +5,7 @@ import { TaskType } from "@prisma/client";
 import { toggleTaskCompletion } from "@/lib/actions";
 import { dueDateLabel } from "@/lib/dates";
 import { TASK_TYPE_META } from "@/lib/taskTypes";
+import RichTextContent from "./RichTextContent";
 
 export default function TaskRow({
   id,
@@ -78,7 +79,7 @@ export default function TaskRow({
         >
           {title}
         </p>
-        {description && <p className="mt-0.5 text-sm text-stone-500 dark:text-stone-400">{description}</p>}
+        {description && <RichTextContent html={description} className="mt-0.5 text-stone-500 dark:text-stone-400" />}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-3">
           <span

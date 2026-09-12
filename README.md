@@ -104,6 +104,12 @@ no redeploys needed.
   not the public internet. A roll number is enough to claim an account (with a
   password the student sets themselves) — good enough for this use case, but don't
   reuse this pattern for anything with real stakes.
-- **Prisma migrations**: this project uses `prisma db push` (schema sync) rather
-  than versioned migrations, to keep things simple for a one-person-maintained class
-  tool. If the project grows, switch to `prisma migrate dev`/`deploy`.
+- **Prisma migrations**: this project uses versioned migrations (`prisma migrate
+  deploy` on every build), not `prisma db push`. `db push` syncs the schema by
+  diffing and can silently drop/recreate columns it decides need to change,
+  which actually happened once during development (a column's data got reset on
+  a routine deploy) — migrations only ever apply deliberate, reviewed changes.
+  To change the schema: edit `prisma/schema.prisma`, then run
+  `npx prisma migrate dev --name <description>` locally (needs a moment to spin
+  up a shadow database) to generate and apply a migration, commit the new
+  `prisma/migrations/<timestamp>_<name>/` folder, and the next deploy applies it.

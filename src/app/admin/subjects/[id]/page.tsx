@@ -10,6 +10,7 @@ import { deleteMaterial, deleteTask } from "@/lib/actions";
 import { dueDateLabel } from "@/lib/dates";
 import { MATERIAL_TAG_META } from "@/lib/materialTags";
 import { TASK_TYPE_META } from "@/lib/taskTypes";
+import RichTextContent from "@/components/RichTextContent";
 
 export default async function SubjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -53,7 +54,7 @@ export default async function SubjectDetailPage({ params }: { params: Promise<{ 
                     <p className="font-medium text-stone-900 dark:text-white">{t.title}</p>
                   </div>
                   <p className="mt-0.5 text-sm text-stone-500 dark:text-stone-400">{dueDateLabel(t.dueDate).text}</p>
-                  {t.description && <p className="mt-0.5 text-sm text-stone-500 dark:text-stone-400">{t.description}</p>}
+                  {t.description && <RichTextContent html={t.description} className="mt-0.5 text-stone-500 dark:text-stone-400" />}
                 </div>
                 <DeleteButton action={deleteTask.bind(null, t.id, subject.id)} />
               </div>
