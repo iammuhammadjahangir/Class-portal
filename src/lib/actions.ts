@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { TaskType } from "@prisma/client";
+import { TaskType, MaterialTag } from "@prisma/client";
 
 async function requireAdmin() {
   const session = await auth();
@@ -19,7 +19,7 @@ async function requireStudent() {
 
 // ---------- Student-facing ----------
 
-export async function toggleTaskCompletion(taskId: string, completed: boolean) {
+export async function toggleTaskCompletion(taskId: string, completed: boolean, subjectId?: string) {
   const user = await requireStudent();
   await prisma.taskCompletion.upsert({
     where: { taskId_studentId: { taskId, studentId: user.id } },
@@ -27,6 +27,7 @@ export async function toggleTaskCompletion(taskId: string, completed: boolean) {
     create: { taskId, studentId: user.id, completed, completedAt: completed ? new Date() : null },
   });
   revalidatePath("/dashboard");
+  if (subjectId) revalidatePath(`/dashboard/subjects/${subjectId}`);
 }
 
 // ---------- Subjects ----------
@@ -78,6 +79,7 @@ export async function createMaterial(data: {
   subjectId: string;
   title: string;
   description?: string;
+  tag: MaterialTag;
   fileUrl?: string;
   linkUrl?: string;
 }) {
@@ -88,12 +90,14 @@ export async function createMaterial(data: {
       subjectId: data.subjectId,
       title: data.title.trim(),
       description: data.description?.trim() || null,
+      tag: data.tag,
       fileUrl: data.fileUrl || null,
       linkUrl: data.linkUrl || null,
     },
   });
   revalidatePath(`/admin/subjects/${data.subjectId}`);
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/subjects/${data.subjectId}`);
 }
 
 export async function deleteMaterial(id: string, subjectId: string) {
@@ -101,6 +105,7 @@ export async function deleteMaterial(id: string, subjectId: string) {
   await prisma.material.delete({ where: { id } });
   revalidatePath(`/admin/subjects/${subjectId}`);
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/subjects/${subjectId}`);
 }
 
 // ---------- Tasks (assignments / quizzes / tasks) ----------
@@ -129,6 +134,7 @@ export async function createTask(data: {
   });
   revalidatePath(`/admin/subjects/${data.subjectId}`);
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/subjects/${data.subjectId}`);
 }
 
 export async function deleteTask(id: string, subjectId: string) {
@@ -136,6 +142,7 @@ export async function deleteTask(id: string, subjectId: string) {
   await prisma.task.delete({ where: { id } });
   revalidatePath(`/admin/subjects/${subjectId}`);
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/subjects/${subjectId}`);
 }
 
 // ---------- Roster ----------

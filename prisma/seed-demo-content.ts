@@ -1,4 +1,4 @@
-import { PrismaClient, TaskType } from "@prisma/client";
+import { PrismaClient, TaskType, MaterialTag } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +9,7 @@ const DEMO: Record<
   string,
   {
     tasks: { title: string; type: TaskType; dueDate: string | null; description: string }[];
-    materials: { title: string; description: string }[];
+    materials: { title: string; description: string; tag: MaterialTag }[];
   }
 > = {
   "Research Methodology": {
@@ -19,9 +19,9 @@ const DEMO: Record<
       { title: "Literature Review Submission", type: "TASK", dueDate: "2026-09-10", description: "Submit 5 summarized papers relevant to your proposal topic." },
     ],
     materials: [
-      { title: "Week 1 Slides — Introduction to Research Methods", description: "Overview of the research process." },
-      { title: "Week 2 Slides — Quantitative vs. Qualitative Research", description: "" },
-      { title: "Reading — Sample Research Paper (APA format)", description: "Reference for formatting your proposal." },
+      { title: "Week 1 Slides — Introduction to Research Methods", description: "Overview of the research process.", tag: "SLIDES" },
+      { title: "Week 2 Slides — Quantitative vs. Qualitative Research", description: "", tag: "SLIDES" },
+      { title: "Reading — Sample Research Paper (APA format)", description: "Reference for formatting your proposal.", tag: "READING" },
     ],
   },
   "Advanced Theory of Automata": {
@@ -31,9 +31,9 @@ const DEMO: Record<
       { title: "Practice Problems — Chapter 3", type: "TASK", dueDate: null, description: "Optional, for extra practice before the quiz." },
     ],
     materials: [
-      { title: "Week 1 Slides — Finite Automata Review", description: "" },
-      { title: "Week 2 Slides — Pushdown Automata", description: "" },
-      { title: "Reference Notes — Turing Machines", description: "" },
+      { title: "Week 1 Slides — Finite Automata Review", description: "", tag: "SLIDES" },
+      { title: "Week 2 Slides — Pushdown Automata", description: "", tag: "SLIDES" },
+      { title: "Reference Notes — Turing Machines", description: "", tag: "READING" },
     ],
   },
   "Advanced Computer Architecture": {
@@ -43,9 +43,9 @@ const DEMO: Record<
       { title: "Cache Simulation Exercise", type: "TASK", dueDate: "2026-09-28", description: "" },
     ],
     materials: [
-      { title: "Week 1 Slides — ISA & Performance Metrics", description: "" },
-      { title: "Week 2 Slides — Pipelining", description: "" },
-      { title: "Reading — Cache Coherence Protocols", description: "" },
+      { title: "Week 1 Slides — ISA & Performance Metrics", description: "", tag: "SLIDES" },
+      { title: "Week 2 Slides — Pipelining", description: "", tag: "SLIDES" },
+      { title: "Reading — Cache Coherence Protocols", description: "", tag: "READING" },
     ],
   },
   "Applied Deep Learning": {
@@ -55,9 +55,9 @@ const DEMO: Record<
       { title: "Dataset Exploration — MNIST", type: "TASK", dueDate: null, description: "Load, visualize, and summarize the dataset before next class." },
     ],
     materials: [
-      { title: "Week 1 Slides — Intro to Deep Learning", description: "" },
-      { title: "Week 2 Slides — CNNs and Architectures", description: "" },
-      { title: "Reading — Deep Learning Book, Chapter 6", description: "Optional but recommended." },
+      { title: "Week 1 Slides — Intro to Deep Learning", description: "", tag: "SLIDES" },
+      { title: "Week 2 Slides — CNNs and Architectures", description: "", tag: "SLIDES" },
+      { title: "Reading — Deep Learning Book, Chapter 6", description: "Optional but recommended.", tag: "READING" },
     ],
   },
   "Fehm-e-Quran-I": {
@@ -67,9 +67,9 @@ const DEMO: Record<
       { title: "Reflection Writing", type: "TASK", dueDate: "2026-09-30", description: "One page, personal reflection on this week's themes." },
     ],
     materials: [
-      { title: "Week 1 Notes — Introduction to Tafseer", description: "" },
-      { title: "Week 2 Notes — Themes of Surah Al-Baqarah", description: "" },
-      { title: "Recitation Guide", description: "" },
+      { title: "Week 1 Notes — Introduction to Tafseer", description: "", tag: "COURSEWORK" },
+      { title: "Week 2 Notes — Themes of Surah Al-Baqarah", description: "", tag: "COURSEWORK" },
+      { title: "Recitation Guide", description: "", tag: "COURSEWORK" },
     ],
   },
 };
@@ -106,6 +106,7 @@ async function main() {
           subjectId: subject.id,
           title: m.title,
           description: m.description || null,
+          tag: m.tag,
           linkUrl: "https://drive.google.com/",
         },
       });

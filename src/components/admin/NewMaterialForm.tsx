@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MaterialTag } from "@prisma/client";
 import { createMaterial } from "@/lib/actions";
+import { MATERIAL_TAG_META, MATERIAL_TAG_OPTIONS } from "@/lib/materialTags";
 import FileOrLinkInput from "./FileOrLinkInput";
 
 export default function NewMaterialForm({ subjectId }: { subjectId: string }) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [tag, setTag] = useState<MaterialTag>("SLIDES");
   const [fileUrl, setFileUrl] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [saving, setSaving] = useState(false);
@@ -29,10 +32,11 @@ export default function NewMaterialForm({ subjectId }: { subjectId: string }) {
     e.preventDefault();
     if (!title.trim()) return;
     setSaving(true);
-    await createMaterial({ subjectId, title, description, fileUrl, linkUrl });
+    await createMaterial({ subjectId, title, description, tag, fileUrl, linkUrl });
     setSaving(false);
     setTitle("");
     setDescription("");
+    setTag("SLIDES");
     setFileUrl("");
     setLinkUrl("");
     setOpen(false);
@@ -48,6 +52,23 @@ export default function NewMaterialForm({ subjectId }: { subjectId: string }) {
         onChange={(e) => setTitle(e.target.value)}
         className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none focus:border-accent-500 focus:ring-4 focus:ring-accent-100 dark:focus:ring-accent-950/50 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
       />
+      <div>
+        <p className="mb-1 text-xs font-medium text-stone-500 dark:text-stone-400">Content type</p>
+        <div className="flex flex-wrap gap-1.5">
+          {MATERIAL_TAG_OPTIONS.map((t) => (
+            <button
+              type="button"
+              key={t}
+              onClick={() => setTag(t)}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition ${
+                tag === t ? MATERIAL_TAG_META[t].active : MATERIAL_TAG_META[t].inactive
+              }`}
+            >
+              {MATERIAL_TAG_META[t].label}
+            </button>
+          ))}
+        </div>
+      </div>
       <input
         placeholder="Short note (optional)"
         value={description}

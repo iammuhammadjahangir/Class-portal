@@ -1,17 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { TaskType } from "@prisma/client";
 import { toggleTaskCompletion } from "@/lib/actions";
 import { dueDateLabel } from "@/lib/dates";
-
-const TYPE_LABEL: Record<string, string> = {
-  ASSIGNMENT: "Assignment",
-  QUIZ: "Quiz",
-  TASK: "Task",
-};
+import { TASK_TYPE_META } from "@/lib/taskTypes";
 
 export default function TaskRow({
   id,
+  subjectId,
   subjectName,
   title,
   description,
@@ -22,10 +19,11 @@ export default function TaskRow({
   initialCompleted,
 }: {
   id: string;
-  subjectName: string;
+  subjectId?: string;
+  subjectName?: string;
   title: string;
   description: string | null;
-  type: string;
+  type: TaskType;
   dueDate: Date | null;
   fileUrl: string | null;
   linkUrl: string | null;
@@ -34,13 +32,14 @@ export default function TaskRow({
   const [completed, setCompleted] = useState(initialCompleted);
   const [isPending, startTransition] = useTransition();
   const due = dueDateLabel(dueDate);
+  const typeMeta = TASK_TYPE_META[type];
 
   function handleToggle() {
     const next = !completed;
     setCompleted(next); // optimistic
     startTransition(async () => {
       try {
-        await toggleTaskCompletion(id, next);
+        await toggleTaskCompletion(id, next, subjectId);
       } catch {
         setCompleted(!next); // revert on failure
       }
@@ -67,17 +66,19 @@ export default function TaskRow({
       </button>
 
       <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${typeMeta.chip}`}>{typeMeta.label}</span>
+          {subjectName && <span className="text-xs text-stone-400">{subjectName}</span>}
+        </div>
+
         <p
-          className={`font-medium text-stone-900 dark:text-white ${
+          className={`mt-1 font-medium text-stone-900 dark:text-white ${
             completed ? "text-stone-400 line-through dark:text-stone-600" : ""
           }`}
         >
           {title}
         </p>
-        <p className="mt-0.5 text-sm text-stone-500 dark:text-stone-400">
-          {subjectName} · {TYPE_LABEL[type] ?? type}
-        </p>
-        {description && <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">{description}</p>}
+        {description && <p className="mt-0.5 text-sm text-stone-500 dark:text-stone-400">{description}</p>}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-3">
           <span
