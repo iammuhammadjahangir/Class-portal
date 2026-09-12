@@ -17,7 +17,7 @@ export default function DeleteButton({
   if (confirming) {
     return (
       <span className="inline-flex items-center gap-1.5 text-xs">
-        <span className="text-slate-500">{confirmText}</span>
+        <span className="text-stone-500">{confirmText}</span>
         <button
           disabled={isPending}
           onClick={() =>
@@ -30,7 +30,7 @@ export default function DeleteButton({
         >
           Yes, delete
         </button>
-        <button onClick={() => setConfirming(false)} className="text-slate-400 hover:underline">
+        <button onClick={() => setConfirming(false)} className="text-stone-400 hover:underline">
           Cancel
         </button>
       </span>
@@ -40,7 +40,7 @@ export default function DeleteButton({
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="text-xs font-medium text-slate-400 hover:text-red-600"
+      className="text-xs font-medium text-stone-400 hover:text-red-600"
     >
       Delete
     </button>

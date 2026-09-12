@@ -37,17 +37,26 @@ model Subject {
   tasks     Task[]
 }
 
+enum MaterialTag {
+  SLIDES
+  READING
+  COURSEWORK
+  OTHER
+}
+
 // Course content / slides / reading material — informational only, never
-// shown with a complete/incomplete toggle.
+// shown with a complete/incomplete toggle. `tag` lets students filter down
+// by content type on a subject with a lot of uploads.
 model Material {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subject     Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   title       String
   description String?
+  tag         MaterialTag @default(OTHER)
   fileUrl     String? // uploaded via Vercel Blob
   linkUrl     String? // external link (Drive, YouTube, etc.)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime    @default(now())
 
   @@index([subjectId])
 }

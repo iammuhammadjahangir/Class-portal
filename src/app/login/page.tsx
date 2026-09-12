@@ -102,18 +102,23 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-slate-50 px-4 py-10 dark:bg-slate-950">
+    <main className="flex min-h-dvh items-center justify-center bg-stone-50 px-4 py-10 dark:bg-stone-950">
       <div className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-white">MSCS Weekend · Fall 26</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Air University class portal</p>
+        <div className="mb-8 text-center">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-accent-600 dark:text-accent-400">
+            Air University
+          </p>
+          <h1 className="mt-1 font-serif text-2xl font-semibold text-stone-900 dark:text-white">
+            MSCS Weekend · Fall 26
+          </h1>
+          <p className="mt-1.5 text-sm text-stone-500 dark:text-stone-400">Sign in with your roll number</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-lg border border-stone-200 bg-white p-6 dark:border-stone-800 dark:bg-stone-900">
           {step === "rollNumber" && (
             <form onSubmit={handleLookup} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                   Your roll number
                 </label>
                 <input
@@ -121,13 +126,13 @@ export default function LoginPage() {
                   value={rollNumber}
                   onChange={(e) => setRollNumber(e.target.value)}
                   placeholder="e.g. AU-MSCS-01"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none transition focus:border-accent-500 focus:ring-4 focus:ring-accent-100 dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:focus:ring-accent-950/50"
                 />
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
               <button
                 disabled={loading}
-                className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-50 dark:bg-white dark:text-slate-900"
+                className="w-full rounded-lg bg-accent-600 py-2.5 text-sm font-medium text-white transition hover:bg-accent-700 disabled:opacity-50 dark:bg-accent-500 dark:hover:bg-accent-600"
               >
                 {loading ? "Checking…" : "Continue"}
               </button>
@@ -136,27 +141,27 @@ export default function LoginPage() {
 
           {step === "login" && (
             <form onSubmit={handleLogin} className="space-y-4">
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                Welcome back, <span className="font-medium text-slate-900 dark:text-white">{name}</span>
+              <p className="text-sm text-stone-600 dark:text-stone-300">
+                Welcome back, <span className="font-medium text-stone-900 dark:text-white">{name}</span>
               </p>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">Password</label>
                 <input
                   autoFocus
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none transition focus:border-accent-500 focus:ring-4 focus:ring-accent-100 dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:focus:ring-accent-950/50"
                 />
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
               <button
                 disabled={loading}
-                className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-50 dark:bg-white dark:text-slate-900"
+                className="w-full rounded-lg bg-accent-600 py-2.5 text-sm font-medium text-white transition hover:bg-accent-700 disabled:opacity-50 dark:bg-accent-500 dark:hover:bg-accent-600"
               >
                 {loading ? "Logging in…" : "Log in"}
               </button>
-              <button type="button" onClick={reset} className="w-full text-center text-xs text-slate-400 hover:text-slate-600">
+              <button type="button" onClick={reset} className="w-full text-center text-xs text-stone-400 hover:text-stone-600">
                 Not you? Go back
               </button>
             </form>
@@ -164,39 +169,39 @@ export default function LoginPage() {
 
           {step === "claim" && (
             <form onSubmit={handleClaim} className="space-y-4">
-              <p className="text-sm text-slate-600 dark:text-slate-300">
-                Welcome, <span className="font-medium text-slate-900 dark:text-white">{name}</span> — first time
+              <p className="text-sm text-stone-600 dark:text-stone-300">
+                Welcome, <span className="font-medium text-stone-900 dark:text-white">{name}</span> — first time
                 here. Set a password to finish setting up your account.
               </p>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">New password</label>
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">New password</label>
                 <input
                   autoFocus
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none transition focus:border-accent-500 focus:ring-4 focus:ring-accent-100 dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:focus:ring-accent-950/50"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-sm font-medium text-stone-700 dark:text-stone-300">
                   Confirm password
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm outline-none transition focus:border-accent-500 focus:ring-4 focus:ring-accent-100 dark:border-stone-700 dark:bg-stone-800 dark:text-white dark:focus:ring-accent-950/50"
                 />
               </div>
               {error && <p className="text-sm text-red-600">{error}</p>}
               <button
                 disabled={loading}
-                className="w-full rounded-lg bg-slate-900 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-50 dark:bg-white dark:text-slate-900"
+                className="w-full rounded-lg bg-accent-600 py-2.5 text-sm font-medium text-white transition hover:bg-accent-700 disabled:opacity-50 dark:bg-accent-500 dark:hover:bg-accent-600"
               >
                 {loading ? "Setting up…" : "Create account & log in"}
               </button>
-              <button type="button" onClick={reset} className="w-full text-center text-xs text-slate-400 hover:text-slate-600">
+              <button type="button" onClick={reset} className="w-full text-center text-xs text-stone-400 hover:text-stone-600">
                 Not you? Go back
               </button>
             </form>

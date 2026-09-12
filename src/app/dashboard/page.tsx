@@ -1,108 +1,75 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import TopNav from "@/components/TopNav";
-import TaskCard from "@/components/TaskCard";
-import MaterialItem from "@/components/MaterialItem";
+import { subjectStatus, type SubjectStatusTone } from "@/lib/dates";
+
+const STATUS_STYLE: Record<SubjectStatusTone, string> = {
+  overdue: "bg-red-50 text-red-700 dark:bg-red-950/50 dark:text-red-400",
+  today: "bg-accent-100 text-accent-800 dark:bg-accent-950/70 dark:text-accent-300",
+  soon: "bg-accent-50 text-accent-700 dark:bg-accent-950/50 dark:text-accent-400",
+  upcoming: "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300",
+  done: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400",
+  none: "bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-500",
+};
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const userId = session.user.id;
 
-  const [subjects, tasks] = await Promise.all([
-    prisma.subject.findMany({
-      orderBy: { order: "asc" },
-      include: { materials: { orderBy: { createdAt: "desc" } } },
-    }),
-    prisma.task.findMany({
-      include: {
-        subject: true,
-        completions: { where: { studentId: userId } },
-      },
-    }),
-  ]);
-
-  // Sort: incomplete first (soonest due date first, no-due-date last), then completed.
-  const sortedTasks = [...tasks].sort((a, b) => {
-    const aDone = a.completions[0]?.completed ?? false;
-    const bDone = b.completions[0]?.completed ?? false;
-    if (aDone !== bDone) return aDone ? 1 : -1;
-
-    const aDue = a.dueDate ? a.dueDate.getTime() : Infinity;
-    const bDue = b.dueDate ? b.dueDate.getTime() : Infinity;
-    return aDue - bDue;
+  const subjects = await prisma.subject.findMany({
+    orderBy: { order: "asc" },
+    include: {
+      _count: { select: { materials: true } },
+      tasks: { select: { dueDate: true, completions: { where: { studentId: userId }, select: { completed: true } } } },
+    },
   });
-
-  const subjectsWithMaterials = subjects.filter((s) => s.materials.length > 0);
 
   return (
     <div className="min-h-dvh">
       <TopNav name={session.user.name ?? ""} isAdmin={false} />
 
-      <main className="mx-auto max-w-3xl px-4 py-6">
-        <section>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Tasks & Assignments</h2>
-          <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
-            Sorted by what&apos;s due soonest. Tick things off as you finish them.
-          </p>
-          {sortedTasks.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-400 dark:border-slate-700">
-              Nothing assigned yet.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {sortedTasks.map((t) => (
-                <TaskCard
-                  key={t.id}
-                  id={t.id}
-                  subjectName={t.subject.name}
-                  title={t.title}
-                  description={t.description}
-                  type={t.type}
-                  dueDate={t.dueDate}
-                  fileUrl={t.fileUrl}
-                  linkUrl={t.linkUrl}
-                  initialCompleted={t.completions[0]?.completed ?? false}
-                />
-              ))}
-            </ul>
-          )}
-        </section>
+      <main className="mx-auto max-w-2xl px-4 py-10">
+        <p className="text-[11px] uppercase tracking-[0.14em] text-accent-600 dark:text-accent-400">
+          Semester 1 · Fall 2026
+        </p>
+        <h1 className="mt-0.5 font-serif text-2xl font-semibold text-stone-900 dark:text-white">Your subjects</h1>
+        <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
+          Open a subject for its slides, reading, and what&apos;s due.
+        </p>
 
-        <section className="mt-10">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Course Content</h2>
-          <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
-            Slides and reading material, by subject.
-          </p>
-          {subjectsWithMaterials.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-400 dark:border-slate-700">
-              Nothing uploaded yet.
-            </p>
-          ) : (
-            <div className="space-y-5">
-              {subjectsWithMaterials.map((s) => (
-                <div key={s.id}>
-                  <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    {s.name}
-                    {s.guideName && <span className="ml-2 font-normal text-slate-400">· {s.guideName}</span>}
-                  </h3>
-                  <ul className="space-y-1.5">
-                    {s.materials.map((m) => (
-                      <MaterialItem
-                        key={m.id}
-                        title={m.title}
-                        description={m.description}
-                        fileUrl={m.fileUrl}
-                        linkUrl={m.linkUrl}
-                      />
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+        {subjects.length === 0 ? (
+          <p className="mt-8 text-sm text-stone-400">Nothing here yet — check back once your CR adds subjects.</p>
+        ) : (
+          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {subjects.map((s, i) => {
+              const status = subjectStatus(
+                s.tasks.map((t) => ({ dueDate: t.dueDate, completed: t.completions[0]?.completed ?? false }))
+              );
+              return (
+                <Link
+                  key={s.id}
+                  href={`/dashboard/subjects/${s.id}`}
+                  className="rounded-lg border border-stone-200 bg-white p-4 transition hover:border-accent-300 dark:border-stone-800 dark:bg-stone-900 dark:hover:border-accent-700"
+                >
+                  <div className="flex items-baseline gap-2.5">
+                    <span className="font-mono text-sm text-stone-300 dark:text-stone-700">{String(i + 1).padStart(2, "0")}</span>
+                    <p className="font-serif text-lg text-stone-900 dark:text-white">{s.name}</p>
+                  </div>
+                  {s.guideName && <p className="pl-[27px] text-sm text-stone-500 dark:text-stone-400">{s.guideName}</p>}
+                  <div className="mt-3 flex items-center justify-between pl-[27px]">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[status.tone]}`}>
+                      {status.text}
+                    </span>
+                    <span className="text-xs text-stone-400">{s._count.materials} materials</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );

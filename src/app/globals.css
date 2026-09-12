@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/*
+ * Warm, editorial palette and type system — deliberately away from the
+ * default "AI-generated SaaS" tells: no gradients, no cards-for-everything,
+ * no generic Inter/Roboto grid. Structural chrome uses Tailwind's built-in
+ * `stone` scale (warm neutrals); `accent` is the one custom color, a
+ * terracotta used sparingly for actions and emphasis; `serif` is an
+ * editorial display face reserved for headings and titles.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+  --font-serif: var(--font-source-serif);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-accent-50: #fbf3ef;
+  --color-accent-100: #f5e3d9;
+  --color-accent-200: #ebc5b0;
+  --color-accent-300: #dfa383;
+  --color-accent-400: #d48764;
+  --color-accent-500: #c2694a;
+  --color-accent-600: #a8523a;
+  --color-accent-700: #8a3f2d;
+  --color-accent-800: #6e3324;
+  --color-accent-900: #59291d;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
