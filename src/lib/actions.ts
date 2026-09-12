@@ -34,11 +34,13 @@ export async function toggleTaskCompletion(taskId: string, completed: boolean) {
 export async function createSubject(data: { name: string; guideName?: string; description?: string }) {
   await requireAdmin();
   if (!data.name.trim()) throw new Error("Subject name is required.");
+  const count = await prisma.subject.count();
   await prisma.subject.create({
     data: {
       name: data.name.trim(),
       guideName: data.guideName?.trim() || null,
       description: data.description?.trim() || null,
+      order: count,
     },
   });
   revalidatePath("/admin");
